@@ -1,0 +1,13 @@
+# Контекст сборки: секреты, данные и логи в образ не попадают.
+.env
+.env.*
+*.env
+!.env.example
+data/
+logs/
+*.log
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.git

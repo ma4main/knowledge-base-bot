@@ -1,0 +1,29 @@
+services:
+  kb-bot:
+    build: .
+    container_name: kb-bot
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      KB_ROOT: /app/kb
+      DATA_DIR: /app/data
+      # Часовой пояс команды. Все расписания бота и даты в базе считаются в нём.
+      TZ: Europe/Moscow
+    volumes:
+      # Репозиторий базы знаний, на запись: бот сохраняет файлы и правит единицы.
+      - ..:/app/kb
+      # Ключ доступа к репозиторию: ровно один файл, а не вся папка ключей.
+      - /root/.ssh/id_ed25519_github:/root/.ssh/id_ed25519_github:ro
+      - /root/.ssh/config:/root/.ssh/config:ro
+      - /root/.ssh/known_hosts:/root/.ssh/known_hosts:ro
+      # То, что бот пишет сам: состояние, журналы, переписка. Переживает пересборку.
+      - kb-bot-data:/app/data
+    # Порты не публикуются: long polling исходящий, входящих соединений нет.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  kb-bot-data:

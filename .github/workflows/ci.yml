@@ -1,0 +1,42 @@
+# Проверки на каждый пуш и pull request. Сеть и ключи не нужны: самопроверка
+# и сценарии меню работают на демонстрационной базе из репозитория.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+
+    env:
+      KB_ROOT: ${{ github.workspace }}
+      TZ: Europe/Moscow
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: bot/requirements.txt
+
+      - name: Установить зависимости
+        run: pip install -r bot/requirements.txt pip-audit
+
+      - name: Самопроверка
+        working-directory: bot
+        run: python selfcheck.py
+
+      - name: Сценарии меню
+        run: python docs/scripts/menu_e2e.py
+
+      - name: Неопределённые имена (pyflakes)
+        run: python -m pyflakes bot docs/scripts
+
+      - name: Известные уязвимости зависимостей
+        run: pip-audit -r bot/requirements.txt

@@ -1,0 +1,9 @@
+{
+  "leaders": [],
+  "leaders_env_seen": [],
+  "extra_managers": [],
+  "users": {},
+  "chats": {},
+  "model": "google/gemini-3.7-flash",
+  "autonomy": true
+}
